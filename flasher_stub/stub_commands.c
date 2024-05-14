@@ -140,9 +140,14 @@ void handle_flash_read(uint32_t addr, uint32_t len, uint32_t block_size,
   stub_rx_async_enable(true);
 }
 
+static uint8_t tohex(uint8_t c) {
+    if (c < 10) return '0' + c;
+    else return 'a' + c - 10;
+}
+
 int handle_flash_get_md5sum(uint32_t addr, uint32_t len) {
   uint8_t buf[FLASH_SECTOR_SIZE];
-  uint8_t digest[16];
+  uint8_t digest[32];
   uint8_t res = 0;
   struct MD5Context ctx;
   MD5Init(&ctx);
@@ -168,7 +173,15 @@ int handle_flash_get_md5sum(uint32_t addr, uint32_t len) {
     len -= n;
   }
   MD5Final(digest, &ctx);
-  /* ESP32 ROM sends as hex, but we just send raw bytes - esptool.py can handle either. */
+  uint8_t *dptr = digest + 15;
+  uint8_t *eptr = digest + 31;
+  for (;;) {
+    uint8_t d = *dptr--;
+    *eptr-- = tohex(d & 0x0f);
+    *eptr-- = tohex((d & 0xf0) >> 4);
+    if (dptr < digest) break;
+  }
+
   SLIP_send_frame_data_buf(digest, sizeof(digest));
   return 0;
 }
