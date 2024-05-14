@@ -291,6 +291,7 @@ void cmd_loop() {
             error = verify_data_len(command, 16) || handle_flash_begin(data_words[0], data_words[3]);
         }
       break;
+#ifndef WITHOUT_DEFLATE
     case ESP_FLASH_DEFLATED_BEGIN:
       /* parameters:
          0 - uncompressed size
@@ -304,8 +305,11 @@ void cmd_loop() {
             error = verify_data_len(command, 16) || handle_flash_deflated_begin(data_words[0], data_words[1] * data_words[2], data_words[3]);
         }
         break;
+#endif
     case ESP_FLASH_DATA:
+#ifndef WITHOUT_DEFLATE
     case ESP_FLASH_DEFLATED_DATA:
+#endif
 #if !ESP8266
     case ESP_FLASH_ENCRYPT_DATA:
 #endif
@@ -329,7 +333,9 @@ void cmd_loop() {
       }
       break;
     case ESP_FLASH_END:
+#ifndef WITHOUT_DEFLATE
     case ESP_FLASH_DEFLATED_END:
+#endif
       error = handle_flash_end();
       break;
     case ESP_SPI_SET_PARAMS:
@@ -394,10 +400,12 @@ void cmd_loop() {
         handle_flash_encrypt_data(command->data_buf + 16, command->data_len -16);
         break;
 #endif
+#ifndef WITHOUT_DEFLATE
       case ESP_FLASH_DEFLATED_DATA:
         handle_flash_deflated_data(command->data_buf + 16, command->data_len - 16);
         break;
       case ESP_FLASH_DEFLATED_END:
+#endif
       case ESP_FLASH_END:
         /* passing 0 as parameter for ESP_FLASH_END means reboot now */
         if (data_words[0] == 0) {
