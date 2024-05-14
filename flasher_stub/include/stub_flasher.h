@@ -47,9 +47,11 @@ typedef enum {
   ESP_SPI_ATTACH = 0x0d,
   ESP_SPI_READ = 0x0e,
   ESP_SET_BAUD = 0x0f,
+#ifndef WITHOUT_DEFLATE
   ESP_FLASH_DEFLATED_BEGIN = 0x10,
   ESP_FLASH_DEFLATED_DATA = 0x11,
   ESP_FLASH_DEFLATED_END = 0x12,
+#endif
   ESP_FLASH_VERIFY_MD5 = 0x13,
 
   /* Commands supported by the ESP32S2 and later bootloaders */
