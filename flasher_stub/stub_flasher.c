@@ -199,7 +199,7 @@ void cmd_loop() {
         }
         break;
     case ESP_FLASH_VERIFY_MD5:
-        resp.len_ret = 16 + 2; /* Will sent 16 bytes of data with MD5 value */
+        resp.len_ret = 32 + 2; /* Will sent 32 bytes of data with MD5 hexdigest */
         break;
     #if ESP32S2_OR_LATER
     case ESP_GET_SECURITY_INFO:
