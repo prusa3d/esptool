@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # SPDX-FileCopyrightText: 2016 Cesanta Software Limited
 #
@@ -72,6 +72,10 @@ def write_json_files(stubs_dict):
     for filename, stub_data in stubs_dict.items():
         with open(os.path.join(BUILD_DIR, filename), "w") as outfile:
             json.dump(stub_data, outfile, cls=BytesEncoder, indent=4)
+        with open(os.path.join(BUILD_DIR, filename + '.text.bin'), "wb") as outfile:
+            outfile.write(stub_data['text'])
+        with open(os.path.join(BUILD_DIR, filename + '.data.bin'), "wb") as outfile:
+            outfile.write(stub_data['data'])
 
 
 def stub_name(filename):
